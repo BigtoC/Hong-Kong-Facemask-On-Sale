@@ -8,11 +8,9 @@ import nest_asyncio
 import pysnooper
 from Crawler.util import *
 
-# ToDo: Remember to delete before commit
-email: str = "xxx"
-password: str = "xxx"
-
-bonjour_url = "https://www.facebook.com/pg/bonjourhk/posts/"
+# Generated a temp email from https://temp-mail.org/ for creating a new FB account
+email: str = "xiside2970@jmail7.com"
+password: str = "hkmask2020"
 
 
 async def get_web_instance(url: str):
@@ -74,7 +72,7 @@ async def get_data_from_web(url: str) -> str:
 
 if __name__ == '__main__':
     nest_asyncio.apply()
-
+    bonjour_url = "https://www.facebook.com/pg/bonjourhk/posts/"
     asyncio.get_event_loop().run_until_complete(
         get_data_from_web(bonjour_url)
     )
