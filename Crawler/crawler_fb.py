@@ -1,20 +1,16 @@
 # coding=utf-8
-
+from typing import List, Any, Union
 
 import requests
 from pyppeteer import launch
 import asyncio
 import nest_asyncio
 import pysnooper
-from bs4 import BeautifulSoup as Bs
-import re
-import time
-from dataclasses import dataclass
 from Crawler.util import *
 
 # ToDo: Remember to delete before commit
-email = "xxx"
-password = "xxx"
+email: str = "xxx"
+password: str = "xxx"
 
 bonjour_url = "https://www.facebook.com/pg/bonjourhk/posts/"
 
@@ -24,7 +20,7 @@ async def get_web_instance(url: str):
     print_time_and_msg("Setting up browser for web page...")
 
     browser = await launch({
-        "headless": True,
+        "headless": False,
     })
     page = await browser.newPage()
 
@@ -49,31 +45,36 @@ async def login(page):
 
     await page.waitForNavigation()
 
-    time.sleep(2)
+    for i in range(10):
+        await page.evaluate('_ => {window.scrollBy(0, window.innerHeight);}')
+        random_wait()
 
     return page
 
 
-async def get_data_from_web():
-    page, browser = asyncio.get_event_loop().run_until_complete(get_web_instance(bonjour_url))
+async def get_data_from_web(url: str) -> str:
+    page, browser = asyncio.get_event_loop().run_until_complete(
+        get_web_instance(url)
+    )
+
     after_login = asyncio.get_event_loop().run_until_complete(login(page))
     print_time_and_msg(f"Phrasing contents...")
 
+    content_str = ""
     all_post_contents = await after_login.xpath('//*[@id="pagelet_timeline_main_column"]')
-    content_list = []
 
     for item in all_post_contents:
         # 获取文本
-        item_str = await (await item.getProperty('textContent')).jsonValue()
-        content_list = item_str.split("Bonjour Cosmetics")
-
-    for c in content_list:
-        print(c)
+        content_str += await (await item.getProperty('textContent')).jsonValue()
 
     await browser.close()
+
+    return content_str
 
 
 if __name__ == '__main__':
     nest_asyncio.apply()
 
-    asyncio.get_event_loop().run_until_complete(get_data_from_web())
+    asyncio.get_event_loop().run_until_complete(
+        get_data_from_web(bonjour_url)
+    )
