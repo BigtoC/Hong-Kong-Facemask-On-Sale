@@ -56,7 +56,7 @@ async def get_data_from_web(url: str) -> str:
     )
 
     after_login = asyncio.get_event_loop().run_until_complete(login(page))
-    print_time_and_msg(f"Phrasing contents...")
+    print_time_and_msg(f"Crawling contents...")
 
     content_str = ""
     all_post_contents = await after_login.xpath('//*[@id="pagelet_timeline_main_column"]')
