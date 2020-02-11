@@ -54,7 +54,7 @@ async def close_dialog(dialog):
 
 
 async def scroll_down(page):
-    for i in range(5):
+    for i in range(10):
         await page.evaluate('_ => {window.scrollBy(0, window.innerHeight);}')
         random_wait()
 
@@ -71,7 +71,7 @@ async def get_data_from_web(page, url: str) -> str:
     for item in all_post_contents:
         # 获取文本
         content_str += await (await item.getProperty('textContent')).jsonValue()
-
+    print(content_str)
     return content_str
 
 

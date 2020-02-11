@@ -72,12 +72,9 @@ def detect_on_sale(content: str):
         on_sale_result = re.findall(r'指定分店|派籌時間', content)
         not_sale_result = re.findall(r'"沒有口罩"|"沒有發售"|"沒有發售口罩"', content)
 
-        print(on_sale_result)
-        print(not_sale_result)
-
         if len(on_sale_result) > 0 and not_sale_result == 0:
             return True
-        elif len(on_sale_result) == 0 and not_sale_result > 0:
+        elif len(on_sale_result) == 0 and len(not_sale_result) > 0:
             return False
         else:
             return None
@@ -98,12 +95,13 @@ def analysis_fb_page(shop_name: str, contents: str):
             load_to_dict(shop_name, on_sale, post_time, post_content)
             break
 
-        elif not on_sale:
+        elif on_sale is False:
             load_to_dict(shop_name, on_sale, post_time, post_content)
+            print(posts_dict)
             break
 
-        else:
-            load_to_dict(shop_name, False, datetime.now(), f"Cannot find recently mask sales info")
+        elif on_sale is None:
+            load_to_dict(shop_name, on_sale, datetime.now(), f"Cannot find recently mask sales info")
 
     print_time_and_msg(f"Finish analysing {shop_name}...")
 

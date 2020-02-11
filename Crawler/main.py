@@ -9,8 +9,8 @@ import asyncio
 import nest_asyncio
 
 sources = {
-    # "Bonjour Cosmetics": "https://www.facebook.com/pg/bonjourhk/posts/",
-    # "Sasa Hong Kong 莎莎香港": "https://www.facebook.com/pg/sasahongkong/posts/",
+    "Bonjour Cosmetics": "https://www.facebook.com/pg/bonjourhk/posts/",
+    "Sasa Hong Kong 莎莎香港": "https://www.facebook.com/pg/sasahongkong/posts/",
     "JHC 日本城": "https://www.facebook.com/pg/JHC-%E6%97%A5%E6%9C%AC%E5%9F%8E-289317227159/posts/"
 
 }
