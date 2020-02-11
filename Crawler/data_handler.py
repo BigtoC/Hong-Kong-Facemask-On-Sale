@@ -3,15 +3,10 @@
 from Crawler.util import *
 
 import re
-from dataclasses import dataclass
 from _datetime import datetime, timedelta
 
 
-@dataclass
-class Post:
-    on_sale: bool
-    post_time: datetime
-    post_content: str
+posts_dict: dict = {}
 
 
 def handler_selector(shop_name: str, url: str, contents: str):
@@ -26,7 +21,7 @@ def convert_str_to_time(time_str: str) -> datetime:
         hour = timedelta(hours=int(time_str.replace("小時", "")))
         dt = datetime.now() - hour
 
-    if  "分鐘" in time_str:
+    if "分鐘" in time_str:
         minute = timedelta(minutes=int(time_str.replace("分鐘", "")))
         dt = datetime.now() - minute
 
@@ -37,6 +32,9 @@ def convert_str_to_time(time_str: str) -> datetime:
         hour = int(tmp_time.split(":")[0])
         minute = int(tmp_time.split(":")[1])
         dt = datetime(datetime.now().year, month, date, hour, minute, 00)
+
+    else:
+        pass
 
     return dt
 
@@ -59,23 +57,63 @@ def extract_fb_post_text(text: str) -> tuple:
     return post_time, content
 
 
+def load_to_dict(shop_name: str, on_sale: bool, post_time: datetime, post_content: str,):
+
+    posts_dict[shop_name] = {
+        "Today On Sale": on_sale,
+        "Post Time": post_time,
+        "Post Content": post_content
+    }
+
+
+def detect_on_sale(content: str):
+
+    if "口罩" in content:
+        on_sale_result = re.findall(r'指定分店|派籌時間', content)
+        not_sale_result = re.findall(r'"沒有口罩"|"沒有發售"|"沒有發售口罩"', content)
+
+        print(on_sale_result)
+        print(not_sale_result)
+
+        if len(on_sale_result) > 0 and not_sale_result == 0:
+            return True
+        elif len(on_sale_result) == 0 and not_sale_result > 0:
+            return False
+        else:
+            return None
+
+
 def analysis_fb_page(shop_name: str, contents: str):
-    print_time_and_msg(f"Analysing {shop_name}...")
 
     content_list: list = contents.split(shop_name)
     content_list = content_list[1: -1]
 
     for c in content_list:
-        if "指定分店" and "派籌時間" in c:
-            post_time, post_content = extract_fb_post_text(c)
-            print(f"{post_time} - {post_content}")
+        post_time, post_content = extract_fb_post_text(c)
+        # print(f"{post_time} - {post_content}")
+
+        on_sale = detect_on_sale(post_content)
+
+        if on_sale:
+            load_to_dict(shop_name, on_sale, post_time, post_content)
             break
-        elif "沒有口罩" or "沒有發售" and "口罩" in c:
-            post_time, post_content = extract_fb_post_text(c)
-            print(f"{post_time} - {post_content}")
+
+        elif not on_sale:
+            load_to_dict(shop_name, on_sale, post_time, post_content)
             break
+
         else:
-            pass
+            load_to_dict(shop_name, False, datetime.now(), f"Cannot find recently mask sales info")
+
+    print_time_and_msg(f"Finish analysing {shop_name}...")
+
+
+def write_data():
+    last_update: datetime = datetime.now()
+    last_update_str: str = f"const last_update = {last_update}"
+
+    for shop, content in posts_dict.items():
+        print(f"{shop}: \n    {content}")
 
 
 if __name__ == "__main__":

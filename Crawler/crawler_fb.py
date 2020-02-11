@@ -40,13 +40,21 @@ async def login(page):
     random_wait()
 
     await page.waitForNavigation()
-    print_time_and_msg(f"Login success!")
+    print_time_and_msg(f"Login success!\n")
+
+    page.on('dialog', lambda dialog: asyncio.ensure_future(close_dialog(dialog)))
+
     asyncio.get_event_loop().run_until_complete(scroll_down(page))
     return page
 
 
+async def close_dialog(dialog):
+    print_time_and_msg(f"Closed dialog")
+    await dialog.dismiss()
+
+
 async def scroll_down(page):
-    for i in range(10):
+    for i in range(5):
         await page.evaluate('_ => {window.scrollBy(0, window.innerHeight);}')
         random_wait()
 
