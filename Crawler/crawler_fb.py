@@ -1,7 +1,5 @@
 # coding=utf-8
-from typing import List, Any, Union
 
-import requests
 from pyppeteer import launch
 import nest_asyncio
 import asyncio
@@ -38,10 +36,11 @@ async def login(page):
     await page.type("#pass", password)
     random_wait()
 
-    await page.click("#u_0_b")
+    await page.keyboard.press('Enter')
     random_wait()
 
     await page.waitForNavigation()
+    print_time_and_msg(f"Login success!")
     asyncio.get_event_loop().run_until_complete(scroll_down(page))
     return page
 
