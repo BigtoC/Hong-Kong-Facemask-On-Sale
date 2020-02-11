@@ -71,7 +71,7 @@ async def get_data_from_web(page, url: str) -> str:
     for item in all_post_contents:
         # 获取文本
         content_str += await (await item.getProperty('textContent')).jsonValue()
-    print(content_str)
+
     return content_str
 
 

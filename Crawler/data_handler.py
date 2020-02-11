@@ -51,8 +51,8 @@ def extract_fb_post_text(text: str) -> tuple:
 
     post_text = text[0: position]
 
-    post_time = convert_str_to_time(post_text.split(" · ")[0])
-    content = post_text.split(" · ")[1]
+    post_time = convert_str_to_time(post_text.split("·")[0])
+    content = post_text.split("·")[1]
 
     return post_time, content
 
