@@ -70,7 +70,7 @@ def analysis_fb_page(shop_name: str, contents: str):
             post_time, post_content = extract_fb_post_text(c)
             print(f"{post_time} - {post_content}")
             break
-        elif "沒有口罩" in c:
+        elif "沒有口罩" or "沒有發售" and "口罩" in c:
             post_time, post_content = extract_fb_post_text(c)
             print(f"{post_time} - {post_content}")
             break
