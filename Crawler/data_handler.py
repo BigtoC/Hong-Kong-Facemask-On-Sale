@@ -3,11 +3,42 @@
 from Crawler.util import *
 
 import re
+from dataclasses import dataclass
+from _datetime import datetime, timedelta
+
+
+@dataclass
+class Post:
+    on_sale: bool
+    post_time: datetime
+    post_content: str
 
 
 def handler_selector(shop_name: str, url: str, contents: str):
     if "pg" in url:
         analysis_fb_page(shop_name, contents)
+
+
+def convert_str_to_time(time_str: str) -> datetime:
+    dt = None
+
+    if "小時" in time_str:
+        hour = timedelta(hours=int(time_str.replace("小時", "")))
+        dt = datetime.now() - hour
+
+    if  "分鐘" in time_str:
+        minute = timedelta(minutes=int(time_str.replace("分鐘", "")))
+        dt = datetime.now() - minute
+
+    elif "月" and "日" in time_str:
+        month = int(time_str[0])
+        date = int(time_str[2])
+        tmp_time = time_str[4: -1]
+        hour = int(tmp_time.split(":")[0])
+        minute = int(tmp_time.split(":")[1])
+        dt = datetime(datetime.now().year, month, date, hour, minute, 00)
+
+    return dt
 
 
 def extract_fb_post_text(text: str) -> tuple:
@@ -21,7 +52,8 @@ def extract_fb_post_text(text: str) -> tuple:
         position = text.find(position_text)
 
     post_text = text[0: position]
-    post_time = post_text.split(" · ")[0]
+
+    post_time = convert_str_to_time(post_text.split(" · ")[0])
     content = post_text.split(" · ")[1]
 
     return post_time, content
