@@ -11,7 +11,7 @@ all_result: dict = {}
 
 def handler_selector(shop_name: str, url: str, contents: str):
     if "www.facebook.com/pg/" in url:
-        all_result.update(analysis_fb_page(shop_name, contents))
+        all_result.update(analysis_fb_page(shop_name, contents, url))
 
 
 def write_data():

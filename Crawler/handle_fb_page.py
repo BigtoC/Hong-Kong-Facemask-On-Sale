@@ -82,7 +82,7 @@ def extract_fb_post_text(text: str) -> tuple:
     return post_time, content
 
 
-def load_to_dict(shop_name: str, on_sale: bool, post_time: str, post_content: str,):
+def load_to_dict(shop_name: str, on_sale: bool, post_time: str, post_content: str, url: str):
     dict_key = re.sub('[\u4e00-\u9fa5]', '', shop_name).replace(" ", "")
 
     posts_dict[dict_key] = {
@@ -90,7 +90,7 @@ def load_to_dict(shop_name: str, on_sale: bool, post_time: str, post_content: st
         "Today On Sale": on_sale,
         "Post Time": post_time,
         "Post Content": post_content,
-        "FB Page Url": f"https://www.facebook.com/pg/{shop_name}/post"
+        "FB Page Url": url,
     }
 
 
@@ -106,7 +106,7 @@ def detect_on_sale(content: str):
         return None
 
 
-def analysis_fb_page(shop_name: str, contents: str):
+def analysis_fb_page(shop_name: str, contents: str, url: str):
 
     content_list: list = contents.split(shop_name)
     content_list = content_list[1: -1]
@@ -123,21 +123,23 @@ def analysis_fb_page(shop_name: str, contents: str):
                     selling = True
                 else:
                     selling = False
-                load_to_dict(shop_name, selling, datetime_to_str(post_time), post_content)
+                load_to_dict(shop_name, selling, datetime_to_str(post_time), post_content, url)
                 break
 
             elif on_sale is False:
-                load_to_dict(shop_name, on_sale, datetime_to_str(post_time), post_content)
+                load_to_dict(shop_name, False, datetime_to_str(post_time), post_content, url)
                 break
 
-            # elif on_sale is None:
-            #     load_to_dict(shop_name, on_sale, datetime.now(), f"Cannot find recently mask sales info")
+            elif on_sale is None:
+                pass
 
-    if shop_name not in posts_dict:
+    dict_key = re.sub('[\u4e00-\u9fa5]', '', shop_name).replace(" ", "")
+    if dict_key not in posts_dict:
         load_to_dict(
             shop_name, False,
             datetime_to_str(datetime.now()),
-            f"Cannot find recently mask sales info"
+            f"Cannot find recent facemask sales info",
+            url
         )
 
     print_time_and_msg(f"Finish analysing {shop_name}...")
