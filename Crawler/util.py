@@ -23,5 +23,10 @@ def random_wait():
     time.sleep(wait_time)
 
 
+def datetime_to_str(para_datetime: datetime) -> str:
+    return para_datetime.strftime(f'[%Y-%m-%d %H:%M:%S]')
+
+
 if __name__ == "__main__":
-    print_time_and_msg("https://www.facebook.com/pg/JHC-%E6%97%A5%E6%9C%AC%E5%9F%8E-289317227159/posts/")
+    # print(datetime_to_str(datetime.now()))
+    print("aaa".upper().count("aaa"))

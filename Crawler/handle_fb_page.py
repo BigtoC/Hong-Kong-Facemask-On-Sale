@@ -82,12 +82,15 @@ def extract_fb_post_text(text: str) -> tuple:
     return post_time, content
 
 
-def load_to_dict(shop_name: str, on_sale: bool, post_time: datetime, post_content: str,):
+def load_to_dict(shop_name: str, on_sale: bool, post_time: str, post_content: str,):
+    dict_key = re.sub('[\u4e00-\u9fa5]', '', shop_name).replace(" ", "")
 
-    posts_dict[shop_name] = {
+    posts_dict[dict_key] = {
+        "Shop Name": shop_name,
         "Today On Sale": on_sale,
         "Post Time": post_time,
-        "Post Content": post_content
+        "Post Content": post_content,
+        "FB Page Url": f"https://www.facebook.com/pg/{shop_name}/post"
     }
 
 
@@ -111,22 +114,31 @@ def analysis_fb_page(shop_name: str, contents: str):
     for c in content_list:
         if "口罩" in c:
             post_time, post_content = extract_fb_post_text(c)
+            today_date = datetime.now()
 
             on_sale = detect_on_sale(post_content)
 
             if on_sale:
-                load_to_dict(shop_name, on_sale, post_time, post_content)
+                if post_time.month == today_date.month and post_time.day == today_date.day:
+                    selling = True
+                else:
+                    selling = False
+                load_to_dict(shop_name, selling, datetime_to_str(post_time), post_content)
                 break
 
             elif on_sale is False:
-                load_to_dict(shop_name, on_sale, post_time, post_content)
+                load_to_dict(shop_name, on_sale, datetime_to_str(post_time), post_content)
                 break
 
             # elif on_sale is None:
             #     load_to_dict(shop_name, on_sale, datetime.now(), f"Cannot find recently mask sales info")
 
     if shop_name not in posts_dict:
-        load_to_dict(shop_name, False, datetime.now(), f"Cannot find recently mask sales info")
+        load_to_dict(
+            shop_name, False,
+            datetime_to_str(datetime.now()),
+            f"Cannot find recently mask sales info"
+        )
 
     print_time_and_msg(f"Finish analysing {shop_name}...")
 
