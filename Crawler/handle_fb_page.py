@@ -56,11 +56,23 @@ def extract_fb_post_text(text: str) -> tuple:
 
     p1 = text.find("查看更多")
     p2 = text.find("個回應")
+    position = 0
+
     if p1 < p2:
-        position = p1
+        if p1 == -1:
+            position = p2
+        elif p1 != -1:
+            position = p1
+    elif p2 < p1:
+        if p2 == -1:
+            position = p1
+        elif p2 != -1:
+            print(f"{p1} : {p2}")
+            print(text)
+            position_text = re.findall(r"[\d+\W*]*個回應", text)[0]
+            position = text.find(position_text)
     else:
-        position_text = re.findall(r"[\d+\W*]*個回應", text)[0]
-        position = text.find(position_text)
+        pass
     post_text = text[0: position]
     post_time = convert_str_to_time(post_text.split(" · ")[0])
     try:
@@ -81,7 +93,7 @@ def load_to_dict(shop_name: str, on_sale: bool, post_time: datetime, post_conten
 
 def detect_on_sale(content: str):
 
-    on_sale_result = re.findall(r'指定分店|派籌時間', content)
+    on_sale_result = re.findall(r'指定\S*分店|派籌時間', content)
     not_sale_result = re.findall(r'"沒有口罩"|"沒有發售"|"沒有發售口罩"', content)
     if len(on_sale_result) > 0:
         return True
@@ -112,6 +124,9 @@ def analysis_fb_page(shop_name: str, contents: str):
 
             # elif on_sale is None:
             #     load_to_dict(shop_name, on_sale, datetime.now(), f"Cannot find recently mask sales info")
+
+    if shop_name not in posts_dict:
+        load_to_dict(shop_name, False, datetime.now(), f"Cannot find recently mask sales info")
 
     print_time_and_msg(f"Finish analysing {shop_name}...")
 
