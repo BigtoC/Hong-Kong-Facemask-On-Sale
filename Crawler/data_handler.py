@@ -18,20 +18,37 @@ def convert_str_to_time(time_str: str) -> datetime:
     dt = None
 
     if "小時" in time_str:
-        hour = timedelta(hours=int(time_str.replace("小時", "")))
+        hour = timedelta(hours=
+                         int(re.findall(r"(\d+)\s*小時", time_str)[0])
+                         )
         dt = datetime.now() - hour
 
     if "分鐘" in time_str:
-        minute = timedelta(minutes=int(time_str.replace("分鐘", "")))
+        minute = timedelta(minutes=
+                           int(re.findall(r"(\d+)\s*分鐘", time_str)[0])
+                           )
         dt = datetime.now() - minute
 
     elif "月" and "日" in time_str:
-        month = int(time_str[0])
-        date = int(time_str[2])
-        tmp_time = time_str[4: -1]
-        hour = int(tmp_time.split(":")[0])
-        minute = int(tmp_time.split(":")[1])
+        no_in_str = re.findall(r"\d+", time_str)
+
+        month = int(no_in_str[0])
+        date = int(no_in_str[1])
+        hour = int(no_in_str[2])
+        minute = int(no_in_str[3])
         dt = datetime(datetime.now().year, month, date, hour, minute, 00)
+
+    elif "昨天" in time_str:
+        no_in_str = re.findall(r"\d+", time_str)
+        hour = int(no_in_str[0])
+        minute = int(no_in_str[1])
+
+        dt = datetime(
+            datetime.now().year,
+            datetime.now().month,
+            datetime.now().day - 1,
+            hour, minute, 00
+        )
 
     else:
         pass
@@ -40,20 +57,21 @@ def convert_str_to_time(time_str: str) -> datetime:
 
 
 def extract_fb_post_text(text: str) -> tuple:
+
     p1 = text.find("查看更多")
     p2 = text.find("個回應")
-
     if p1 < p2:
         position = p1
     else:
+        print(text)
         position_text = re.findall(r"[\d+\W*]*個回應", text)[0]
         position = text.find(position_text)
-
     post_text = text[0: position]
-
-    post_time = convert_str_to_time(post_text.split("·")[0])
-    content = post_text.split("·")[1]
-
+    post_time = convert_str_to_time(post_text.split(" · ")[0])
+    try:
+        content = post_text.split(" · ")[1]
+    except IndexError:
+        content = "No info"
     return post_time, content
 
 
@@ -68,16 +86,14 @@ def load_to_dict(shop_name: str, on_sale: bool, post_time: datetime, post_conten
 
 def detect_on_sale(content: str):
 
-    if "口罩" in content:
-        on_sale_result = re.findall(r'指定分店|派籌時間', content)
-        not_sale_result = re.findall(r'"沒有口罩"|"沒有發售"|"沒有發售口罩"', content)
-
-        if len(on_sale_result) > 0 and not_sale_result == 0:
-            return True
-        elif len(on_sale_result) == 0 and len(not_sale_result) > 0:
-            return False
-        else:
-            return None
+    on_sale_result = re.findall(r'指定分店|派籌時間', content)
+    not_sale_result = re.findall(r'"沒有口罩"|"沒有發售"|"沒有發售口罩"', content)
+    if len(on_sale_result) > 0 and not_sale_result == 0:
+        return True
+    elif len(on_sale_result) == 0 and len(not_sale_result) > 0:
+        return False
+    else:
+        return None
 
 
 def analysis_fb_page(shop_name: str, contents: str):
@@ -86,22 +102,22 @@ def analysis_fb_page(shop_name: str, contents: str):
     content_list = content_list[1: -1]
 
     for c in content_list:
-        post_time, post_content = extract_fb_post_text(c)
-        # print(f"{post_time} - {post_content}")
+        if "口罩" in c:
+            post_time, post_content = extract_fb_post_text(c)
 
-        on_sale = detect_on_sale(post_content)
+            on_sale = detect_on_sale(post_content)
 
-        if on_sale:
-            load_to_dict(shop_name, on_sale, post_time, post_content)
-            break
+            if on_sale:
+                load_to_dict(shop_name, on_sale, post_time, post_content)
+                break
 
-        elif on_sale is False:
-            load_to_dict(shop_name, on_sale, post_time, post_content)
-            print(posts_dict)
-            break
+            elif on_sale is False:
+                load_to_dict(shop_name, on_sale, post_time, post_content)
+                print(posts_dict)
+                break
 
-        elif on_sale is None:
-            load_to_dict(shop_name, on_sale, datetime.now(), f"Cannot find recently mask sales info")
+            elif on_sale is None:
+                load_to_dict(shop_name, on_sale, datetime.now(), f"Cannot find recently mask sales info")
 
     print_time_and_msg(f"Finish analysing {shop_name}...")
 
