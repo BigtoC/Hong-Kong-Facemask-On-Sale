@@ -43,5 +43,4 @@ def git_push(commit_msg: str):
 
 
 if __name__ == "__main__":
-    # print(datetime_to_str(datetime.now()))
-    git_push("auto update")
+    pass

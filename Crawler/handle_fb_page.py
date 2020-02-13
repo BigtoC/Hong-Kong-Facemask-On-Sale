@@ -103,6 +103,25 @@ def detect_on_sale(content: str):
         return None
 
 
+def beautify_content(contents: str) -> str:
+    contents: str = contents.replace("派籌時間:", "<b>派籌時間:</b><br/>")
+    try:
+        sell_time: str = re.findall(r"\w*售時間：", contents)[0]
+        contents: str = contents.replace(f"{sell_time}：", f"<b>{sell_time}:</b><br/>")
+    except IndexError:
+        pass
+
+    contents: str = contents.replace("地點：", "<b>地點：</b><br/>")
+
+    sharp_index: int = contents.find("#")
+    if sharp_index > 50:
+        contents: str = contents[0: sharp_index]
+
+    contents: str = contents.replace("-：", "<br/>-")
+
+    return contents
+
+
 def analysis_fb_page(shop_name: str, contents: str, url: str):
 
     content_list: list = contents.split(shop_name)
@@ -114,14 +133,14 @@ def analysis_fb_page(shop_name: str, contents: str, url: str):
             today_date = datetime.now()
 
             on_sale = detect_on_sale(post_content)
-            # post_content = post_content.replace("】", "】<br/>")
 
             if on_sale:
                 if post_time.month == today_date.month and post_time.day == today_date.day:
                     selling = True
                 else:
                     selling = False
-                load_to_dict(shop_name, selling, datetime_to_str(post_time), post_content, url)
+                load_to_dict(
+                    shop_name, selling, datetime_to_str(post_time), beautify_content(post_content), url)
                 break
 
             elif on_sale is False:
