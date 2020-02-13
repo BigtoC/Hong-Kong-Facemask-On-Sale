@@ -116,7 +116,7 @@ def beautify_content(contents: str) -> str:
 
     contents: str = contents.replace("#", "<br/>#")
 
-    contents: str = contents.replace("-", "<br/>-")
+    contents: str = contents.replace("-", "<br/><br/>-")
 
     return contents
 
