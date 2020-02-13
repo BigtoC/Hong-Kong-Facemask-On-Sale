@@ -26,6 +26,14 @@ def start_crawling():
         print()
 
 
+def crawl_once():
+    start_crawling()
+
+    write_data()
+
+    git_push("Auto Update")
+
+
 if __name__ == "__main__":
     nest_asyncio.apply()
 
@@ -35,8 +43,7 @@ if __name__ == "__main__":
 
     page = asyncio.get_event_loop().run_until_complete(login(page))
 
-    start_crawling()
+    while True:
+        crawl_once()
+        time.sleep(3600 * 2)
 
-    write_data()
-
-    git_push("Auto Update")
