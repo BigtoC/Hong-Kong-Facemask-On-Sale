@@ -11,45 +11,42 @@ posts_dict: dict = {}
 
 
 def convert_str_to_time(time_str: str) -> datetime:
-    dt = None
-
-    if "小時" in time_str:
-        hour = timedelta(hours=
-                         int(re.findall(r"(\d+)\s*小時", time_str)[0])
-                         )
-        dt = datetime.now() - hour
-
-    if "分鐘" in time_str:
+    if len(re.findall(r"\d+\s*分鐘", time_str)) > 0:
         minute = timedelta(minutes=
                            int(re.findall(r"(\d+)\s*分鐘", time_str)[0])
                            )
-        dt = datetime.now() - minute
+        return datetime.now() - minute
 
-    elif "月" and "日" in time_str:
-        no_in_str = re.findall(r"\d+", time_str)
-
-        month = int(no_in_str[0])
-        date = int(no_in_str[1])
-        hour = int(no_in_str[2])
-        minute = int(no_in_str[3])
-        dt = datetime(datetime.now().year, month, date, hour, minute, 00)
+    elif len(re.findall(r"\d+\s*小時", time_str)) > 0:
+        hour = timedelta(hours=
+                         int(re.findall(r"(\d+)\s*小時", time_str)[0])
+                         )
+        return datetime.now() - hour
 
     elif "昨天" in time_str:
         no_in_str = re.findall(r"\d+", time_str)
         hour = int(no_in_str[0])
         minute = int(no_in_str[1])
 
-        dt = datetime(
+        return datetime(
             datetime.now().year,
             datetime.now().month,
             datetime.now().day - 1,
             hour, minute, 00
         )
 
+    elif len(re.findall(r"\d+\s*月\d+\s*日", time_str)) > 0:
+        no_in_str = re.findall(r"\d+", time_str)
+        print(time_str)
+
+        month = int(no_in_str[0])
+        date = int(no_in_str[1])
+        hour = int(no_in_str[2])
+        minute = int(no_in_str[3])
+        return datetime(datetime.now().year, month, date, hour, minute, 00)
+
     else:
         pass
-
-    return dt
 
 
 def extract_fb_post_text(text: str) -> tuple:
