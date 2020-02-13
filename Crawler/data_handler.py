@@ -18,7 +18,7 @@ def write_data():
     last_update: datetime = datetime.now()
     last_update_str: str = f'const last_update = "{datetime_to_str(last_update)}"; \n'
 
-    with open("../Web/latest_data.js", "w+", encoding="utf-8") as js:
+    with open("../Web/data/latest_data.js", "w+", encoding="utf-8") as js:
         js.write(last_update_str)
         js.write(f"const data = ")
         json.dump(all_result, js, indent='  ', ensure_ascii=False)
