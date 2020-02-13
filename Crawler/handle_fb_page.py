@@ -104,7 +104,8 @@ def detect_on_sale(content: str):
 
 
 def beautify_content(contents: str) -> str:
-    contents: str = contents.replace("派籌時間:", "<b>派籌時間:</b><br/>")
+    contents: str = contents.replace("派籌時間：", "<b>派籌時間：</b><br/>")
+
     try:
         sell_time: str = re.findall(r"\w*售時間：", contents)[0]
         contents: str = contents.replace(f"{sell_time}：", f"<b>{sell_time}:</b><br/>")
@@ -113,11 +114,9 @@ def beautify_content(contents: str) -> str:
 
     contents: str = contents.replace("地點：", "<b>地點：</b><br/>")
 
-    sharp_index: int = contents.find("#")
-    if sharp_index > 50:
-        contents: str = contents[0: sharp_index]
+    contents: str = contents.replace("#", "<br/>#")
 
-    contents: str = contents.replace("-：", "<br/>-")
+    contents: str = contents.replace("-", "<br/>-")
 
     return contents
 
