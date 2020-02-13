@@ -116,7 +116,7 @@ def beautify_content(contents: str) -> str:
 
     contents: str = contents.replace("#", "<br/>#")
 
-    contents: str = contents.replace("-", "<br/><br/>-")
+    contents: str = contents.replace("-", "<br/><br/>- ")
 
     return contents
 
@@ -143,7 +143,7 @@ def analysis_fb_page(shop_name: str, contents: str, url: str):
                 break
 
             elif on_sale is False:
-                load_to_dict(shop_name, False, datetime_to_str(post_time), post_content, url)
+                load_to_dict(shop_name, False, datetime_to_str(post_time), beautify_content(post_content), url)
                 break
 
             elif on_sale is None:
