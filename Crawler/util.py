@@ -6,9 +6,10 @@ import pytz
 import random
 import locale
 from git import Repo
+import logging
 
 locale.setlocale(locale.LC_CTYPE, 'chinese')
-git_path = "https://github.com/BigtoC/Hong-Kong-Facemask-On-Sale"
+dot_git_folder_path = "../.git"
 
 
 def print_time_and_msg(msg: str):
@@ -31,16 +32,16 @@ def datetime_to_str(para_datetime: datetime) -> str:
 
 def git_push(commit_msg: str):
     try:
-        repo = Repo(git_path)
+        repo = Repo(dot_git_folder_path)
         repo.git.add(update=True)
         repo.index.commit(commit_msg)
         origin = repo.remote(name='origin')
         origin.push()
         print_time_and_msg(f"Committed as \"{commit_msg}\"")
-    except:
-        print_time_and_msg('Some error occurred while pushing the code')
+    except BaseException:
+        logging.exception("An exception was thrown!")
 
 
 if __name__ == "__main__":
     # print(datetime_to_str(datetime.now()))
-    print("aaa".upper().count("aaa"))
+    git_push("auto update")
