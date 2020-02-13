@@ -117,6 +117,7 @@ def analysis_fb_page(shop_name: str, contents: str, url: str):
             today_date = datetime.now()
 
             on_sale = detect_on_sale(post_content)
+            post_content = post_content.replace("】", "】\n")
 
             if on_sale:
                 if post_time.month == today_date.month and post_time.day == today_date.day:
