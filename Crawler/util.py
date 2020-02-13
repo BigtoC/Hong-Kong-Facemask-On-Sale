@@ -5,8 +5,10 @@ import time
 import pytz
 import random
 import locale
+from git import Repo
 
 locale.setlocale(locale.LC_CTYPE, 'chinese')
+git_path = "https://github.com/BigtoC/Hong-Kong-Facemask-On-Sale"
 
 
 def print_time_and_msg(msg: str):
@@ -25,6 +27,18 @@ def random_wait():
 
 def datetime_to_str(para_datetime: datetime) -> str:
     return para_datetime.strftime(f'[%Y-%m-%d %H:%M:%S]')
+
+
+def git_push(commit_msg: str):
+    try:
+        repo = Repo(git_path)
+        repo.git.add(update=True)
+        repo.index.commit(commit_msg)
+        origin = repo.remote(name='origin')
+        origin.push()
+        print_time_and_msg(f"Committed as \"{commit_msg}\"")
+    except:
+        print_time_and_msg('Some error occurred while pushing the code')
 
 
 if __name__ == "__main__":
