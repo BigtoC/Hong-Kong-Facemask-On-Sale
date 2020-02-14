@@ -7,6 +7,7 @@ from Crawler.util import *
 
 import asyncio
 import nest_asyncio
+import datetime
 
 sources = {
     "Bonjour Cosmetics": "https://www.facebook.com/pg/bonjourhk/posts/",
@@ -36,6 +37,7 @@ def crawl_once():
 
 if __name__ == "__main__":
     nest_asyncio.apply()
+    interval = 900
 
     page, browser = asyncio.get_event_loop().run_until_complete(
         get_web_instance("https://www.facebook.com/")
@@ -45,5 +47,6 @@ if __name__ == "__main__":
 
     while True:
         crawl_once()
-        time.sleep(900)
+        print_time_and_msg(f"f{str(datetime.timedelta(seconds=interval))} until next update")
+        time.sleep(interval)
 
