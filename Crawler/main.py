@@ -45,5 +45,5 @@ if __name__ == "__main__":
 
     while True:
         crawl_once()
-        time.sleep(3600 * 2)
+        time.sleep(5)
 
