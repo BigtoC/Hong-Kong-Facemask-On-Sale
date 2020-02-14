@@ -105,6 +105,7 @@ def detect_on_sale(content: str):
 
 def beautify_content(contents: str) -> str:
     contents: str = contents.replace("派籌時間：", "<b>派籌時間：</b><br/>")
+    contents: str = contents.replace("地點：", "<b>地點：</b><br/>")
 
     try:
         sell_time: str = re.findall(r"\w*售時間：", contents)[0]
@@ -112,10 +113,14 @@ def beautify_content(contents: str) -> str:
     except IndexError:
         pass
 
-    contents: str = contents.replace("地點：", "<b>地點：</b><br/>")
+    try:
+        sell_shop: str = re.findall(r"指定\w*分店：", contents)[0]
+        contents: str = contents.replace(f"{sell_shop}：", f"<b>{sell_shop}:</b>")
+    except IndexError:
+        pass
 
     contents: str = contents.replace("#", "<br/>#")
-
+    contents: str = contents.replace("⋯⋯", "<br/>#")
     contents: str = contents.replace("-", "<br/><br/>- ")
 
     return contents
