@@ -61,6 +61,7 @@ async def scroll_down(page):
 
 async def get_data_from_web(page, url: str) -> str:
     await page.goto(url)
+    page.waitForNavigation({'timeout': 1000*3000})
 
     print_time_and_msg(f"Crawling contents...")
     asyncio.get_event_loop().run_until_complete(scroll_down(page))
