@@ -37,9 +37,9 @@ def git_push(commit_msg: str):
         repo.index.commit(commit_msg)
         origin = repo.remote(name='origin')
         origin.push()
-        print_time_and_msg(f"Committed as \"{commit_msg}\"")
+        print_time_and_msg(f"Committed as \"{commit_msg}\" \n")
     except BaseException as e:
-        logging.exception("An exception was thrown!")
+        logging.exception("An exception was thrown! \n")
 
 
 if __name__ == "__main__":
