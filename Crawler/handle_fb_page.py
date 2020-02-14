@@ -93,7 +93,7 @@ def load_to_dict(shop_name: str, on_sale: bool, post_time: str, post_content: st
 
 def detect_on_sale(content: str):
 
-    on_sale_result = re.findall(r'指定\S*分店|派籌時間', content)
+    on_sale_result = re.findall(r'指定\S*分店|派籌時間|\S口罩\S*返貨', content)
     not_sale_result = re.findall(r'"沒有口罩"|"沒有發售"|"沒有發售口罩"', content)
     if len(on_sale_result) > 0:
         return True
