@@ -47,6 +47,6 @@ if __name__ == "__main__":
 
     while True:
         crawl_once()
-        print_time_and_msg(f"f{str(datetime.timedelta(seconds=interval))} until next update")
+        print_time_and_msg(f"{str(datetime.timedelta(seconds=interval))} until next update")
         time.sleep(interval)
 
