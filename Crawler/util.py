@@ -7,6 +7,7 @@ import random
 import locale
 from git import Repo
 import logging
+import re
 
 locale.setlocale(locale.LC_CTYPE, 'chinese')
 dot_git_folder_path = "../.git"

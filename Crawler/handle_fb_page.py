@@ -110,13 +110,13 @@ def beautify_content(contents: str) -> str:
 
     try:
         sell_time: str = re.findall(r"(\S*售時間：|\S*售日期：)", contents)[0]
-        contents: str = contents.replace(f"{sell_time}：", f"<br/><b>{sell_time}:</b><br/>")
+        contents: str = contents.replace(sell_time, f"<br/><b>{sell_time}：</b><br/>")
     except IndexError:
         pass
 
     try:
         sell_shop: str = re.findall(r"(指定\S*分店：)", contents)[0]
-        contents: str = contents.replace(f"{sell_shop}：", f"<br/><b>{sell_shop}:</b>")
+        contents: str = contents.replace(sell_shop, f"<br/><b>{sell_shop}:</b>")
     except IndexError:
         pass
 
